@@ -1,4 +1,6 @@
 package com.romaniuk;
+import com.mysql.jdbc.log.NullLogger;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,9 +18,9 @@ public class ScannerSQL {
 
 
         Scanner sc=new Scanner(System.in);
-        System.out.print("Enter name");
+        System.out.print("Enter name: ");
         String first_name = sc.next();
-        System.out.print("Enter id");
+        System.out.print("Enter id: ");
         int id = sc.nextInt();
 
         Connection myConn = null;
@@ -29,8 +31,8 @@ public class ScannerSQL {
         String user = "root";
         String pass = "Sasanka01";
 
-        System.out.print("First name is " +first_name);
-        System.out.print("Your ID is " +id);
+        System.out.print("\nFirst name is " +first_name+ "\n");
+        System.out.print("Your ID is " +id+ "\n");
 
         try {
             // Get a connection to database
@@ -40,22 +42,46 @@ public class ScannerSQL {
                     "root",
                     "Sasanka01");
 
-            System.out.println("Database connection ok");
+            System.out.println("\nDatabase connection ok \n");
             myStmt = myConn.createStatement();
             PreparedStatement sql = myConn.prepareStatement(
                     "insert into score_table values (?,?);");
 
             // set parameter values
             sql.setInt(1,id);
-            sql.setString(2,first_name);
-
-            System.out.println("    ");
+            sql.setString(2, first_name);
             sql.execute();
         } catch (Exception exc) {
             exc.printStackTrace();
         } finally {
-            close(myConn, myStmt, null);
+            //close(myConn, myStmt, null);
         }
+
+        // Selec nad print from SQL
+
+        try {
+            // Prepare statement
+            PreparedStatement sql = myConn.prepareStatement ("select * from score_table");
+
+            // Execute SQL query
+            myRs = sql.executeQuery();
+
+            // Process result set
+            System.out.print("SELECT * FROM socer_table\n\n");
+            while (myRs.next()) {
+                int idRow = myRs.getInt("id");
+                String firstName = myRs.getString("first_name");
+                System.out.printf("%s , %s %n",idRow, firstName);
+            }
+
+            System.out.println();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        } finally {
+            close(myConn,myStmt, myRs);
+        }
+
+
     }
     private static void close(Connection myConn, Statement myStmt,
                               ResultSet myRs) throws SQLException {
