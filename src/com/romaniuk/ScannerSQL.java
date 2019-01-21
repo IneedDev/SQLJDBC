@@ -57,29 +57,37 @@ public class ScannerSQL {
             //close(myConn, myStmt, null);
         }
 
-        // Selec nad print from SQL
+        // Select nad print from SQL
+        System.out.println("Print SQL Table yes/no ?");
+        String openTable = sc.next();
 
-        try {
-            // Prepare statement
-            PreparedStatement sql = myConn.prepareStatement ("select * from score_table");
+        if(openTable.equals("no")){
+            System.out.println(" ");
+        }else {
+            try {
+                // Prepare statement
+                PreparedStatement sql = myConn.prepareStatement ("select * from score_table");
 
-            // Execute SQL query
-            myRs = sql.executeQuery();
+                // Execute SQL query
+                myRs = sql.executeQuery();
 
-            // Process result set
-            System.out.print("SELECT * FROM socer_table\n\n");
-            while (myRs.next()) {
-                int idRow = myRs.getInt("id");
-                String firstName = myRs.getString("first_name");
-                System.out.printf("%s , %s %n",idRow, firstName);
+                // Process result set
+                System.out.print("SELECT * FROM socer_table\n\n");
+                while (myRs.next()) {
+                    int idRow = myRs.getInt("id");
+                    String firstName = myRs.getString("first_name");
+                    System.out.printf("%s , %s %n",idRow, firstName);
+                }
+
+                System.out.println();
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            } finally {
+                close(myConn,myStmt, myRs);
             }
-
-            System.out.println();
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        } finally {
-            close(myConn,myStmt, myRs);
         }
+
+
 
 
     }
